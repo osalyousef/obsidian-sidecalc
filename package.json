@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-sidecalc",
-	"version": "0.1.1",
-	"description": "Scientific calculator for your sidebar: SHIFT/ALPHA key layers, exact fractions and roots, ∫, d/dx, Σ and SOLVE with graphs, history and variables.",
+	"version": "0.1.2",
+	"description": "Scientific math calculator in your sidebar: fractions, roots, trig, logs, integrals, derivatives, sums, an equation solver with graphs, history, variables and LaTeX insert into notes.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
@@ -17,5 +17,15 @@
 		"esbuild": "^0.25.5",
 		"obsidian": "^1.14.4",
 		"typescript": "^7.0.2"
-	}
+	},
+	"keywords": [
+		"obsidian",
+		"obsidian-plugin",
+		"calculator",
+		"scientific-calculator",
+		"math",
+		"graphing",
+		"equation-solver",
+		"latex"
+	]
 }

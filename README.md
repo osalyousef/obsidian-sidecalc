@@ -1,6 +1,6 @@
 # Sidecalc
 
-A scientific calculator for Obsidian that lives in your sidebar. It works like a hardware scientific calculator: SHIFT and ALPHA key layers, natural fractions and roots, calculus, and an equation solver. It also shows a graph of what you just calculated.
+A scientific math calculator for Obsidian that lives in your sidebar, for homework, engineering and everyday sums. It works like a hardware scientific calculator: SHIFT and ALPHA key layers, natural fractions and roots, calculus, and an equation solver. It also shows a graph of what you just calculated.
 
 ![Sidecalc in the sidebar: a derivative with its tangent line, a sum drawn term by term, and an integral with the area shaded](docs/graphs.png)
 
@@ -28,13 +28,18 @@ A scientific calculator for Obsidian that lives in your sidebar. It works like a
 
 ## Install
 
-Sidecalc is not in the Community plugins list yet. To install it by hand:
+In Obsidian, open **Settings → Community plugins → Browse**, search for **Sidecalc**, then select **Install** and **Enable**. You can also open the [Sidecalc page in the community directory](https://community.obsidian.md/plugins/sidecalc) and choose **Add to Obsidian**.
 
-1. Download `main.js`, `manifest.json` and `styles.css` from the latest release.
+Open the calculator from the calculator icon in the left ribbon, or with the command **Sidecalc: Open scientific calculator**. It needs Obsidian 1.13 or later and works on desktop and mobile.
+
+<details>
+<summary>Install by hand</summary>
+
+1. Download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/osalyousef/obsidian-sidecalc/releases/latest).
 2. Put them in `<your vault>/.obsidian/plugins/sidecalc/`.
-3. In Obsidian, open **Settings → Community plugins**, then turn on **Sidecalc**.
+3. Reload Obsidian and turn on **Sidecalc** under **Settings → Community plugins**.
 
-Open it from the calculator icon in the left ribbon, or with the command **Sidecalc: Open scientific calculator**.
+</details>
 
 ## Build from source
 

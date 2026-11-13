@@ -1,9 +1,9 @@
 {
 	"id": "sidecalc",
 	"name": "Sidecalc",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"minAppVersion": "1.13.0",
-	"description": "Scientific calculator for your sidebar: SHIFT/ALPHA key layers, exact fractions and roots, ∫, d/dx, Σ and SOLVE with graphs, history and variables.",
+	"description": "Scientific math calculator in your sidebar: fractions, roots, trig, logs, integrals, derivatives, sums, an equation solver with graphs, history, variables and LaTeX insert into notes.",
 	"author": "Osama",
 	"isDesktopOnly": false,
 	"fundingUrl": "https://ko-fi.com/osalyousef"

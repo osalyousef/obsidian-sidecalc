@@ -1,0 +1,21 @@
+{
+	"name": "obsidian-sidecalc",
+	"version": "0.1.0",
+	"description": "Scientific calculator for your sidebar: SHIFT/ALPHA key layers, exact fractions and roots, ∫, d/dx, Σ and SOLVE with graphs, history and variables.",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"test": "node --experimental-strip-types --test test/*.test.ts",
+		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"deploy": "npm run build && mkdir -p \"$VAULT/.obsidian/plugins/sidecalc\" && cp main.js manifest.json styles.css \"$VAULT/.obsidian/plugins/sidecalc/\""
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^26.6.6",
+		"esbuild": "^0.25.5",
+		"obsidian": "^1.14.4",
+		"typescript": "^7.0.2"
+	}
+}

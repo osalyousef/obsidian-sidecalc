@@ -1,0 +1,419 @@
+/* Sidecalc — sizes scale with the pane via container query units. */
+
+.workspace-leaf-content[data-type="sidecalc"] .view-content {
+	container-type: size;
+	padding: var(--size-4-2);
+	overflow: hidden;
+}
+
+/* On desktop the status bar floats over the bottom of the right sidebar; keep the = key clear of it. */
+body:not(.is-mobile) .mod-right-split .workspace-leaf-content[data-type="sidecalc"] .view-content {
+	padding-bottom: calc(var(--size-4-2) + 28px);
+}
+
+.scicalc {
+	--sc-gap: 4px;
+	--sc-radius: var(--radius-m, 8px);
+	--sc-shift: var(--color-orange);
+	--sc-alpha: var(--color-red);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	height: 100%;
+	direction: ltr;
+	outline: none;
+	user-select: none;
+	font-size: clamp(9px, min(3.4cqw, 2.1cqh), 20px);
+}
+
+/* ---- Screen ---- */
+
+.scicalc-screen {
+	flex: 0 0 auto;
+	min-height: 22cqh;
+	display: flex;
+	flex-direction: column;
+	padding: 0.4em 0.7em 0.5em;
+	border-radius: var(--sc-radius);
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	transition: min-height 160ms ease;
+}
+
+/* A graph needs more room than the tape; the keys give a little up. */
+.scicalc-screen.has-graph { min-height: 38cqh; }
+
+/* ---- Stage: recent calculations or a graph ---- */
+
+.scicalc-stage {
+	position: relative;
+	flex: 1 1 0;
+	min-height: 0;
+	margin: 0 -0.3em;
+}
+
+.scicalc-tape {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column-reverse; /* newest next to the input */
+	overflow: hidden;
+	mask-image: linear-gradient(to bottom, transparent, #000 2.2em);
+}
+
+.scicalc-screen.has-graph .scicalc-tape { display: none; }
+
+.scicalc-tape-row {
+	display: flex;
+	flex: 0 0 auto;
+	gap: 0.8em;
+	padding: 0.1em 0.3em;
+	border-radius: var(--radius-s, 4px);
+	font-size: 0.8em;
+	line-height: 1.5;
+	color: var(--text-faint);
+	cursor: pointer;
+}
+
+.scicalc-tape-row:hover { background: var(--background-modifier-hover); color: var(--text-muted); }
+.scicalc-tape-expr { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.scicalc-tape-value { flex: 0 1 auto; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.scicalc-plot {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.scicalc-screen.has-graph .scicalc-plot { display: block; animation: scicalc-fade 220ms ease-out; }
+
+.scicalc-status {
+	display: flex;
+	gap: 0.6em;
+	min-height: 1.3em;
+	font-size: 0.75em;
+	font-family: var(--font-monospace);
+	color: var(--text-muted);
+}
+
+.scicalc-flag.is-shift { color: var(--sc-shift); font-weight: 700; }
+.scicalc-flag.is-alpha { color: var(--sc-alpha); font-weight: 700; }
+.scicalc-flag.is-angle { margin-left: auto; }
+.scicalc-flag.is-mode { color: var(--text-accent); font-weight: 700; }
+.scicalc-hint-line { margin-left: auto; color: var(--text-faint); font-family: var(--font-interface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scicalc-hint-line + .scicalc-flag.is-angle { margin-left: 0.6em; }
+.scicalc-context { font-size: 0.75em; color: var(--text-muted); word-break: break-all; }
+.scicalc-prompt-label { color: var(--text-accent); font-weight: 700; margin-right: 0.3em; }
+.scicalc-extra { display: block; text-align: right; font-size: 0.85em; color: var(--text-muted); min-height: 1.2em; }
+
+.scicalc-input {
+	flex: 0 0 auto;
+	min-height: 1.6em;
+	font-size: 1.25em;
+	line-height: 1.5;
+	word-break: break-all;
+	user-select: text;
+	color: var(--text-normal);
+}
+
+.scicalc-input.is-math { word-break: normal; }
+
+.scicalc-cursor {
+	display: inline-block;
+	width: 2px;
+	height: 1.1em;
+	margin: 0 -1px;
+	vertical-align: -0.15em;
+	background: var(--text-accent);
+}
+
+.scicalc-cursor.is-error { background: var(--text-error); width: 3px; }
+
+.scicalc-output {
+	display: flex;
+	align-items: baseline;
+	justify-content: flex-end;
+	gap: 0.5em;
+	min-height: 1.4em;
+	font-size: 2.3em;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	user-select: text;
+}
+
+.scicalc-out { display: inline-block; transform-origin: right center; }
+.scicalc-output.is-error .scicalc-out { color: var(--text-error); font-size: 0.6em; }
+.scicalc-out.is-muted { color: var(--text-muted); font-weight: 500; }
+.scicalc-out.is-preview { color: var(--text-faint); font-weight: 500; font-size: 0.62em; }
+.scicalc-output.is-fresh .scicalc-out { animation: scicalc-rise 200ms ease-out; }
+.scicalc-output.is-error.is-fresh .scicalc-out { animation: scicalc-shake 260ms ease-in-out; }
+
+@keyframes scicalc-rise { from { opacity: 0; transform: translateY(0.25em); } }
+@keyframes scicalc-fade { from { opacity: 0; } }
+@keyframes scicalc-shake {
+	20% { transform: translateX(-0.18em); }
+	40% { transform: translateX(0.18em); }
+	60% { transform: translateX(-0.1em); }
+	80% { transform: translateX(0.06em); }
+}
+.scicalc-note { font-size: 0.4em; font-weight: 500; color: var(--text-muted); }
+.scicalc mjx-container { margin: 0 !important; }
+
+/* ---- Toolbar ---- */
+
+.scicalc-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	font-size: 0.8em;
+}
+
+.scicalc-spacer { flex: 1; }
+
+.scicalc-segment {
+	display: flex;
+	padding: 2px;
+	border-radius: 999px;
+	background: var(--background-modifier-hover);
+}
+
+.scicalc-toolbar button,
+.scicalc-panel button {
+	height: auto;
+	min-height: 0;
+	padding: 0.25em 0.7em;
+	font-size: 1em;
+	box-shadow: none;
+}
+
+.scicalc-segment button {
+	border-radius: 999px;
+	background: transparent;
+	color: var(--text-muted);
+}
+
+.scicalc-segment button.is-active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.scicalc-chip {
+	border-radius: 999px;
+	font-family: var(--font-monospace);
+}
+
+.scicalc-icon { padding: 0.3em !important; }
+.scicalc-icon svg { width: 1.3em; height: 1.3em; }
+
+/* ---- Keys ---- */
+
+.scicalc-keys {
+	display: grid;
+	gap: var(--sc-gap);
+	min-height: 0;
+}
+
+.scicalc-keys-fn {
+	flex: 5 1 0;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	grid-template-rows: repeat(5, minmax(0, 1fr));
+}
+
+.scicalc-keys-num {
+	flex: 5.5 1 0;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	grid-template-rows: repeat(4, minmax(0, 1fr));
+}
+
+.scicalc-cell {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.scicalc-sub {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.2em;
+	height: 1.25em;
+	padding: 0 0.15em;
+	font-size: 0.68em;
+	line-height: 1.25em;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.scicalc-sub-shift { color: var(--sc-shift); }
+.scicalc-sub-alpha { color: var(--sc-alpha); margin-left: auto; }
+
+.scicalc .scicalc-key {
+	flex: 1 1 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 0;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border-radius: var(--sc-radius);
+	font-size: 1em;
+	white-space: nowrap;
+	overflow: hidden;
+	box-shadow: none;
+	background-color: var(--background-secondary-alt, var(--background-primary));
+	color: var(--text-normal);
+	touch-action: manipulation;
+}
+
+.scicalc .scicalc-key.is-num {
+	font-size: 1.7em;
+	background-color: var(--interactive-normal);
+}
+
+.scicalc .scicalc-key.is-op {
+	font-size: 1.6em;
+	color: var(--text-on-accent);
+	background-color: var(--interactive-accent);
+}
+
+.scicalc .scicalc-key[data-key="ans"] { font-size: 1.25em; }
+
+.scicalc .scicalc-key.is-clear {
+	font-size: 1.4em;
+	background-color: var(--background-primary);
+}
+
+.scicalc .scicalc-key.is-nav { color: var(--text-muted); }
+.scicalc .scicalc-key.is-mod-shift { color: var(--sc-shift); font-weight: 700; }
+.scicalc .scicalc-key.is-mod-alpha { color: var(--sc-alpha); font-weight: 700; }
+
+.scicalc.is-shift .scicalc-key.is-mod-shift {
+	background-color: var(--sc-shift);
+	color: var(--text-on-accent);
+}
+
+.scicalc.is-alpha .scicalc-key.is-mod-alpha {
+	background-color: var(--sc-alpha);
+	color: var(--text-on-accent);
+}
+
+/* While SHIFT or ALPHA is active, the other layer's labels fade. */
+.scicalc.is-shift .scicalc-sub-alpha,
+.scicalc.is-alpha .scicalc-sub-shift { opacity: 0.3; }
+
+/* Key faces: the main label, plus the SHIFT and ALPHA labels shown while that layer is on. */
+.scicalc-face.is-shift,
+.scicalc-face.is-alpha { display: none; }
+.scicalc.is-shift .scicalc-key.has-shift .scicalc-face.is-main,
+.scicalc.is-alpha .scicalc-key.has-alpha .scicalc-face.is-main { display: none; }
+.scicalc.is-shift .scicalc-key.has-shift .scicalc-face.is-shift { display: inline; color: var(--sc-shift); font-weight: 600; }
+.scicalc.is-alpha .scicalc-key.has-alpha .scicalc-face.is-alpha { display: inline; color: var(--sc-alpha); font-weight: 600; }
+/* The big number-pad labels are too wide for words like "PreAns". */
+.scicalc .scicalc-key.is-num .scicalc-face:not(.is-main),
+.scicalc .scicalc-key.is-op .scicalc-face:not(.is-main),
+.scicalc .scicalc-key.is-clear .scicalc-face:not(.is-main) { font-size: 0.62em; }
+.scicalc.is-shift .scicalc-key.is-op.has-shift .scicalc-face.is-shift,
+.scicalc.is-alpha .scicalc-key.is-op.has-alpha .scicalc-face.is-alpha { color: var(--text-on-accent); }
+.scicalc.is-shift .scicalc-key.is-op.has-shift { box-shadow: inset 0 0 0 2px var(--sc-shift); }
+.scicalc.is-alpha .scicalc-key.is-op.has-alpha { box-shadow: inset 0 0 0 2px var(--sc-alpha); }
+/* Keys with nothing on this layer step back. */
+.scicalc.is-shift .scicalc-key:not(.has-shift):not(.is-mod-shift):not(.is-mod-alpha),
+.scicalc.is-alpha .scicalc-key:not(.has-alpha):not(.is-mod-shift):not(.is-mod-alpha) { opacity: 0.4; }
+.scicalc.is-shift .scicalc-sub-shift,
+.scicalc.is-alpha .scicalc-sub-alpha { visibility: hidden; }
+.scicalc .scicalc-key { transition: transform 70ms ease, opacity 120ms ease, background-color 120ms ease; }
+
+body:not(.is-mobile) .scicalc .scicalc-key:hover { filter: brightness(1.12); }
+.scicalc .scicalc-key:active { filter: brightness(0.85); transform: scale(0.95); }
+
+/* ---- History / variables panel ---- */
+
+.scicalc-panel {
+	display: none;
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	flex-direction: column;
+	border-radius: var(--sc-radius);
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	box-shadow: var(--shadow-s);
+}
+
+.scicalc-panel.is-open { display: flex; }
+
+.scicalc-panel-head {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	padding: 0.5em 0.6em;
+	font-weight: 600;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.scicalc-panel-list { flex: 1; overflow-y: auto; padding: 0.3em; }
+
+.scicalc-row {
+	padding: 0.45em 0.6em;
+	border-radius: var(--radius-s, 4px);
+	cursor: pointer;
+}
+
+.scicalc-row:hover { background: var(--background-modifier-hover); }
+.scicalc-row-expr { color: var(--text-muted); word-break: break-all; }
+.scicalc-row-value { text-align: right; font-weight: 600; font-size: 1.15em; }
+.scicalc-row.is-var { display: flex; justify-content: space-between; gap: 1em; }
+.scicalc-row.is-var .scicalc-row-expr { font-weight: 600; color: var(--text-normal); }
+.scicalc-empty,
+.scicalc-hint { padding: 0.6em; color: var(--text-muted); font-size: 0.85em; }
+
+/* Floating window: hide tab chrome so only the calculator shows. */
+.scicalc-floating .workspace-tab-header-container-inner,
+.scicalc-floating .workspace-tab-header-new-tab,
+.scicalc-floating .workspace-tab-header-tab-list,
+.scicalc-floating .view-header {
+	display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.scicalc *, .scicalc { animation: none !important; transition: none !important; }
+}
+
+/* ---- Ko-fi button: an ordinary chip, like MATH ---- */
+
+.scicalc .scicalc-kofi,
+.scicalc-kofi.is-settings {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35em;
+	min-width: 0;
+	flex: 0 1 auto;
+	border-radius: 999px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+.scicalc-kofi-label { overflow: hidden; text-overflow: ellipsis; }
+.scicalc-kofi-cup { flex: 0 0 auto; width: 1.35em; height: 1.35em; }
+.scicalc-kofi-cup .is-body { fill: currentColor; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; }
+.scicalc-kofi-cup .is-handle { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.scicalc-kofi-cup .is-heart { fill: #ff5e3a; }
+.scicalc-kofi.is-settings { padding-inline: 0.9em; }
+
+/* Compact toolbar spacing leaves room for the Ko-fi label. */
+.scicalc-toolbar { gap: 0.25em; }
+.scicalc-toolbar .scicalc-segment button { padding-inline: 0.45em; }
+.scicalc-toolbar .scicalc-chip,
+.scicalc-toolbar .scicalc-kofi { padding-inline: 0.55em; }
+.scicalc-toolbar .scicalc-icon { padding: 0.2em !important; }
+.scicalc-kofi-label.is-short { display: none; }
+.scicalc-kofi.is-settings .scicalc-kofi-label.is-short { display: none !important; }
+
+/* The narrowest sidebars only have room for "Ko-fi". */
+@container (max-width: 270px) {
+	.scicalc-toolbar .scicalc-kofi-label.is-long { display: none; }
+	.scicalc-toolbar .scicalc-kofi-label.is-short { display: inline; }
+}

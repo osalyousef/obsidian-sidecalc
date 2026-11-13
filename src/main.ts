@@ -59,8 +59,8 @@ export default class SciCalcPlugin extends Plugin {
 		this.lastMarkdown = this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
 
-	async onunload(): Promise<void> {
-		await this.saveData(this.data);
+	onunload(): void {
+		void this.saveData(this.data);
 	}
 
 	formatOptions(): FormatOptions {

@@ -224,7 +224,7 @@ export class SciCalcView extends ItemView {
 		this.renderInput();
 		this.renderOutput();
 		if (this.panel) this.renderPanel();
-		finishRenderMath();
+		void finishRenderMath();
 		this.fitOutput();
 	}
 

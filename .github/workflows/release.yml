@@ -1,0 +1,43 @@
+# Push a tag like 0.1.1 (no "v", matching manifest.json) to build, attest and publish a release.
+name: Release
+
+on:
+  push:
+    tags: ['*']
+
+permissions:
+  contents: write      # create the release
+  id-token: write      # sign the attestation
+  attestations: write  # store the attestation
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+      - name: Check the tag matches manifest.json
+        run: |
+          version=$(node -p "require('./manifest.json').version")
+          [ "$version" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME does not match manifest version $version"; exit 1; }
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" main.js manifest.json styles.css --title "$GITHUB_REF_NAME" --generate-notes

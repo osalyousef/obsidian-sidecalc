@@ -1,8 +1,8 @@
 {
 	"id": "sidecalc",
 	"name": "Sidecalc",
-	"version": "0.1.0",
-	"minAppVersion": "1.7.2",
+	"version": "0.1.1",
+	"minAppVersion": "1.13.0",
 	"description": "Scientific calculator for your sidebar: SHIFT/ALPHA key layers, exact fractions and roots, ∫, d/dx, Σ and SOLVE with graphs, history and variables.",
 	"author": "Osama",
 	"isDesktopOnly": false,

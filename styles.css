@@ -161,7 +161,8 @@ body:not(.is-mobile) .mod-right-split .workspace-leaf-content[data-type="sidecal
 	80% { transform: translateX(0.06em); }
 }
 .scicalc-note { font-size: 0.4em; font-weight: 500; color: var(--text-muted); }
-.scicalc mjx-container { margin: 0 !important; }
+.scicalc .scicalc-input .MathJax,
+.scicalc .scicalc-output .MathJax { margin: 0; } /* MathJax's container element */
 
 /* ---- Toolbar ---- */
 
@@ -206,7 +207,6 @@ body:not(.is-mobile) .mod-right-split .workspace-leaf-content[data-type="sidecal
 	font-family: var(--font-monospace);
 }
 
-.scicalc-icon { padding: 0.3em !important; }
 .scicalc-icon svg { width: 1.3em; height: 1.3em; }
 
 /* ---- Keys ---- */
@@ -380,7 +380,12 @@ body:not(.is-mobile) .scicalc .scicalc-key:hover { filter: brightness(1.12); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.scicalc *, .scicalc { animation: none !important; transition: none !important; }
+	.scicalc,
+	.scicalc .scicalc-key,
+	.scicalc .scicalc-kofi,
+	.scicalc .scicalc-screen,
+	.scicalc .scicalc-plot,
+	.scicalc .scicalc-output .scicalc-out { animation: none; transition: none; }
 }
 
 /* ---- Ko-fi button: an ordinary chip, like MATH ---- */
@@ -408,9 +413,8 @@ body:not(.is-mobile) .scicalc .scicalc-key:hover { filter: brightness(1.12); }
 .scicalc-toolbar .scicalc-segment button { padding-inline: 0.45em; }
 .scicalc-toolbar .scicalc-chip,
 .scicalc-toolbar .scicalc-kofi { padding-inline: 0.55em; }
-.scicalc-toolbar .scicalc-icon { padding: 0.2em !important; }
+.scicalc .scicalc-toolbar .scicalc-icon { padding: 0.2em; }
 .scicalc-kofi-label.is-short { display: none; }
-.scicalc-kofi.is-settings .scicalc-kofi-label.is-short { display: none !important; }
 
 /* The narrowest sidebars only have room for "Ko-fi". */
 @container (max-width: 270px) {

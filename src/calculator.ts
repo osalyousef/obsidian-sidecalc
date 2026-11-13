@@ -663,5 +663,5 @@ export class Calculator {
 
 /** Text that pastes cleanly: ASCII minus, no thin spaces. */
 export function plainText(s: string): string {
-	return s.replace(/ /g, '').replace(/−/g, '-');
+	return s.replace(/\u2009/g, '') /* thin space */.replace(/−/g, '-');
 }

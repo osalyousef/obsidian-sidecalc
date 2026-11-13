@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-sidecalc",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Scientific calculator for your sidebar: SHIFT/ALPHA key layers, exact fractions and roots, ∫, d/dx, Σ and SOLVE with graphs, history and variables.",
 	"main": "main.js",
 	"type": "module",
